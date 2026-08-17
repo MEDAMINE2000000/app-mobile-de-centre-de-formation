@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "722576330974",
+    "project_id": "three-alfa2026",
+    "storage_bucket": "three-alfa2026.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:722576330974:android:3d90561ee7f54f2c9f324f",
+        "android_client_info": {
+          "package_name": "com.example.three_alfa_mobile_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCA7NL3rjJsX83vfmBX41O6UVu_O46pf2Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

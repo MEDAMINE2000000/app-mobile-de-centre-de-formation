@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Three Alfa - Connexion</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #120821;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 40px 30px;
+      text-align: center;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .icon {
+      width: 64px;
+      height: 64px;
+      background: rgba(224, 56, 139, 0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px auto;
+    }
+    .icon svg {
+      width: 32px;
+      height: 32px;
+      fill: #E0388B;
+    }
+    h2 {
+      color: #ffffff;
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    p {
+      color: #b0a8c0;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+    .btn {
+      display: inline-block;
+      width: 100%;
+      padding: 14px 28px;
+      background: linear-gradient(135deg, #E0388B, #8B38E0);
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 1rem;
+      box-shadow: 0 4px 15px rgba(224, 56, 139, 0.4);
+      margin-bottom: 12px;
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+      </svg>
+    </div>
+    <h2>Mot de passe réinitialisé !</h2>
+    <p>Votre mot de passe a été réinitialisé avec succès. Cliquez ci-dessous pour ouvrir l'application Three Alfa et vous connecter.</p>
+    <a id="intentBtn" href="intent://login#Intent;scheme=threealfa;package=com.example.three_alfa_mobile_app;end;" class="btn">Ouvrir l'application Three Alfa</a>
+    <a id="schemeBtn" href="threealfa:///login" class="btn btn-secondary">Lien direct de secours</a>
+  </div>
+  <script>
+    function launchApp() {
+      var isAndroid = /Android/i.test(navigator.userAgent);
+      if (isAndroid) {
+        window.location.href = "intent://login#Intent;scheme=threealfa;package=com.example.three_alfa_mobile_app;end;";
+      } else {
+        window.location.href = "threealfa:///login";
+      }
+    }
+    // Auto-trigger launch after page load
+    setTimeout(launchApp, 300);
+  </script>
+</body>
+</html>

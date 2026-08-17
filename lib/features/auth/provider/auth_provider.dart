@@ -1,0 +1,396 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+
+class AuthProvider extends ChangeNotifier {
+  bool isLoading = false;
+  String? errorMessage;
+  User? user;
+
+  // ── Admin state ──
+  bool isAdmin = false;
+
+  // Router refresh — user identity changes
+  final ValueNotifier<User?> routerRefresh = ValueNotifier<User?>(null);
+  // Router refresh — admin status changes (toggled, not compared by value)
+  final ValueNotifier<bool> adminRefresh = ValueNotifier<bool>(false);
+
+  StreamSubscription<User?>? _authSubscription;
+
+  AuthProvider() {
+    _authSubscription = FirebaseAuth.instance.authStateChanges().listen((
+      firebaseUser,
+    ) async {
+      _setUser(firebaseUser);
+
+      if (firebaseUser != null) {
+        await refreshUser();
+        await checkUserRole();
+      } else {
+        isAdmin = false;
+        _bumpAdminRefresh();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _authSubscription?.cancel();
+    routerRefresh.dispose();
+    adminRefresh.dispose();
+    super.dispose();
+  }
+
+  void _setUser(User? u) {
+    user = u;
+    routerRefresh.value = u;
+    notifyListeners();
+  }
+
+  void _bumpAdminRefresh() {
+    // ValueNotifier only notifies when the value actually changes,
+    // so we toggle a dummy bool to force GoRouter to re-evaluate redirects.
+    adminRefresh.value = !adminRefresh.value;
+    notifyListeners();
+  }
+
+  // ────────────────────────────────────────────────────
+  // FIRESTORE ROLE CHECK
+  // ────────────────────────────────────────────────────
+
+  /// Reads the user's role from their Firestore document at users/{uid}.
+  /// Sets [isAdmin] to true only when the document's `role` field is 'admin'.
+  Future<void> checkUserRole() async {
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+
+    if (firebaseUser == null) {
+      isAdmin = false;
+      _bumpAdminRefresh();
+      return;
+    }
+
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(firebaseUser.uid)
+          .get();
+
+      if (doc.exists) {
+        final data = doc.data();
+        isAdmin = data?['role'] == 'admin';
+      } else {
+        isAdmin = false;
+      }
+
+      debugPrint('========== ADMIN CHECK ==========');
+      debugPrint('UID: ${firebaseUser.uid}');
+      debugPrint('EMAIL: ${firebaseUser.email}');
+      debugPrint('ROLE: ${doc.data()?['role']}');
+      debugPrint('IS ADMIN: $isAdmin');
+      debugPrint('=================================');
+    } catch (e) {
+      debugPrint('CHECK USER ROLE ERROR: $e');
+      isAdmin = false;
+    }
+
+    _bumpAdminRefresh();
+  }
+
+  // ────────────────────────────────────────────────────
+  // LOGIN
+  // ────────────────────────────────────────────────────
+
+  Future<bool> login(String email, String password) async {
+    isLoading = true;
+    errorMessage = null;
+    notifyListeners();
+
+    try {
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email.trim(),
+        password: password.trim(),
+      );
+
+      _setUser(credential.user);
+
+      await refreshUser();
+      await checkUserRole();
+
+      return true;
+    } on FirebaseAuthException catch (e) {
+      errorMessage = _mapAuthError(e.code);
+      return false;
+    } catch (e) {
+      print('LOGIN ERROR: $e');
+      errorMessage = 'Une erreur inattendue est survenue.';
+      return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // ────────────────────────────────────────────────────
+  // REGISTER
+  // ────────────────────────────────────────────────────
+
+  Future<bool> register({
+    required String nom,
+    required String prenom,
+    required String telephone,
+    required String dateNaissance,
+    required String email,
+    required String password,
+  }) async {
+    isLoading = true;
+    errorMessage = null;
+    notifyListeners();
+
+    try {
+      final credential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: email.trim(),
+            password: password.trim(),
+          );
+
+      _setUser(credential.user);
+
+      if (user == null) {
+        errorMessage = 'Impossible de créer le compte.';
+        return false;
+      }
+
+      final uid = user!.uid;
+
+      // ── role: 'user' is ALWAYS forced here. Authorization is determined
+      // by reading users/{uid}.role from Firestore. Security Rules reject
+      // any client attempt to write role != 'user' on their own document. ──
+      await FirebaseFirestore.instance.collection('users').doc(uid).set({
+        'uid': uid,
+        'nom': nom.trim(),
+        'prenom': prenom.trim(),
+        'email': email.trim(),
+        'telephone': telephone.trim(),
+        'dateNaissance': dateNaissance.trim(),
+        'role': 'user',
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      print('USER SAVED IN FIRESTORE');
+
+      await user!.sendEmailVerification();
+
+      print('VERIFICATION EMAIL SENT');
+
+      return true;
+    } on FirebaseAuthException catch (e) {
+      print('REGISTER AUTH ERROR: ${e.code}');
+      errorMessage = _mapAuthError(e.code);
+      return false;
+    } on FirebaseException catch (e) {
+      print('FIRESTORE ERROR: ${e.code}');
+      errorMessage = 'Erreur lors de l\'enregistrement des données.';
+      return false;
+    } catch (e) {
+      print('REGISTER ERROR: $e');
+      errorMessage = 'Une erreur inattendue est survenue.';
+      return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // ────────────────────────────────────────────────────
+  // EMAIL VERIFICATION
+  // ────────────────────────────────────────────────────
+
+  Future<bool> sendEmailVerification() async {
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+
+      if (currentUser == null) {
+        errorMessage = 'Aucun utilisateur connecté.';
+        notifyListeners();
+        return false;
+      }
+
+      await currentUser.sendEmailVerification();
+
+      return true;
+    } on FirebaseAuthException catch (e) {
+      errorMessage = _mapAuthError(e.code);
+      notifyListeners();
+      return false;
+    } catch (e) {
+      errorMessage = 'Impossible d\'envoyer l\'email de vérification.';
+      notifyListeners();
+      return false;
+    }
+  }
+
+  // ────────────────────────────────────────────────────
+  // CHECK EMAIL VERIFICATION
+  // ────────────────────────────────────────────────────
+
+  Future<bool> checkEmailVerification() async {
+    isLoading = true;
+    errorMessage = null;
+    notifyListeners();
+
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+
+      if (currentUser == null) {
+        _setUser(null);
+        errorMessage = 'Aucun utilisateur connecté.';
+        return false;
+      }
+
+      await currentUser.reload();
+
+      _setUser(FirebaseAuth.instance.currentUser);
+
+      if (user == null) {
+        return false;
+      }
+
+      if (user!.emailVerified) {
+        await checkUserRole();
+        return true;
+      }
+
+      errorMessage = 'Votre email n\'est pas encore vérifié.';
+      return false;
+    } on FirebaseAuthException catch (e) {
+      print('VERIFICATION ERROR: ${e.code}');
+      errorMessage = _mapAuthError(e.code);
+
+      if (e.code == 'user-not-found') {
+        _setUser(null);
+        await FirebaseAuth.instance.signOut();
+      }
+
+      return false;
+    } catch (e) {
+      print('CHECK VERIFICATION ERROR: $e');
+      errorMessage = 'Erreur lors de la vérification. Réessayez.';
+      return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // ────────────────────────────────────────────────────
+  // REFRESH USER
+  // ────────────────────────────────────────────────────
+
+  Future<void> refreshUser() async {
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+
+    if (firebaseUser == null) {
+      _setUser(null);
+      return;
+    }
+
+    try {
+      await firebaseUser.reload();
+
+      _setUser(FirebaseAuth.instance.currentUser);
+
+      print('REFRESHED USER: $user');
+    } on FirebaseAuthException catch (e) {
+      print('REFRESH USER ERROR: ${e.code}');
+
+      if (e.code == 'user-not-found') {
+        _setUser(null);
+        await FirebaseAuth.instance.signOut();
+      } else {
+        errorMessage = _mapAuthError(e.code);
+        notifyListeners();
+      }
+    } catch (e) {
+      print('REFRESH USER UNKNOWN ERROR: $e');
+    }
+  }
+
+  // ────────────────────────────────────────────────────
+  // FORGOT PASSWORD
+  // ────────────────────────────────────────────────────
+
+  Future<bool> forgotPassword(String email) async {
+    isLoading = true;
+    errorMessage = null;
+    notifyListeners();
+
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email.trim());
+
+      return true;
+    } on FirebaseAuthException catch (e) {
+      errorMessage = _mapAuthError(e.code);
+      return false;
+    } catch (e) {
+      print('FORGOT PASSWORD ERROR: $e');
+      errorMessage = 'Une erreur inattendue est survenue.';
+      return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // ────────────────────────────────────────────────────
+  // LOGOUT
+  // ────────────────────────────────────────────────────
+
+  Future<void> logout() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+
+      isAdmin = false;
+      _setUser(null);
+      errorMessage = null;
+
+      notifyListeners();
+    } catch (e) {
+      print('LOGOUT ERROR: $e');
+    }
+  }
+
+  // ────────────────────────────────────────────────────
+  // ERROR MAPPING
+  // ────────────────────────────────────────────────────
+
+  String _mapAuthError(String code) {
+    switch (code) {
+      case 'user-not-found':
+        return "Aucun compte n'est associé à cet e-mail.";
+      case 'wrong-password':
+        return 'Mot de passe incorrect.';
+      case 'invalid-email':
+        return "L'adresse e-mail est invalide.";
+      case 'invalid-credential':
+        return 'Identifiants incorrects.';
+      case 'user-disabled':
+        return 'Ce compte a été désactivé.';
+      case 'too-many-requests':
+        return 'Trop de tentatives. Réessayez plus tard.';
+      case 'email-already-in-use':
+        return 'Cet e-mail est déjà utilisé.';
+      case 'weak-password':
+        return 'Le mot de passe est trop faible.';
+      case 'network-request-failed':
+        return 'Vérifiez votre connexion Internet.';
+      case 'operation-not-allowed':
+        return 'Cette méthode de connexion n\'est pas activée.';
+      case 'requires-recent-login':
+        return 'Veuillez vous reconnecter avant cette opération.';
+      default:
+        return 'Erreur de connexion. Veuillez réessayer.';
+    }
+  }
+}
