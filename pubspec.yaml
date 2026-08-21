@@ -29,19 +29,28 @@ dependencies:
   cloud_firestore: ^6.8.0
   firebase_storage: ^13.4.6
   image_picker: ^1.2.3
+<<<<<<< HEAD
   intl: ^0.20.3
   shared_preferences: ^2.5.5
   fl_chart: ^1.2.0
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
   
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+<<<<<<< HEAD
   flutter_lints: ^6.0.0
   mocktail: any
   fake_cloud_firestore: any
   firebase_auth_mocks: any
   network_image_mock: any
+=======
+
+
+  flutter_lints: ^6.0.0
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 
 flutter:
   uses-material-design: true
@@ -71,7 +80,10 @@ flutter:
     - assets/welcome/bande/image_14.png
     - assets/welcome/bande/image_15.png
     - assets/welcome/bande/image_16.png
+<<<<<<< HEAD
     - assets/formations/
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 
     
     

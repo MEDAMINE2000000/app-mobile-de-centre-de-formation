@@ -12,7 +12,10 @@ import 'package:three_alfa_mobile_app/features/inscription/model/inscription_mod
 import 'package:three_alfa_mobile_app/features/inscription/provider/inscription_provider%20.dart';
 
 import 'package:three_alfa_mobile_app/features/inscription/widgets/inscription_card.dart';
+<<<<<<< HEAD
 import 'package:three_alfa_mobile_app/features/inscription/widgets/decision_card.dart';
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 
 class InscriptionScreen extends StatefulWidget {
   const InscriptionScreen({super.key});
@@ -136,6 +139,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
       );
     }
 
+<<<<<<< HEAD
     final decisionsToRead = provider.decisionsToRead;
     final history = provider.historyInscriptions;
 
@@ -186,10 +190,33 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
                   fontSize: 11.5.sp,
                   fontWeight: FontWeight.w700,
                 ),
+=======
+    final pending = provider.pendingInscriptions;
+    final confirmed = provider.confirmedInscriptions;
+    final rejected = provider.myInscriptions
+        .where((i) => i.status == InscriptionStatus.rejected)
+        .toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        TitleBigContainer(),
+        Gap(1.6.h),
+        if (pending.isNotEmpty) ...[
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 5.w),
+            child: Text(
+              'En attente de confirmation',
+              style: TextStyle(
+                color: AppColors.textDark,
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w700,
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
               ),
             ),
           ),
           Gap(1.h),
+<<<<<<< HEAD
           ...decisionsToRead.map((i) => DecisionCard(
                 key: ValueKey(i.id),
                 inscription: i,
@@ -237,6 +264,48 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
           ),
         ],
         Gap(3.h),
+=======
+          ...pending.map(
+            (i) => InscriptionCard(
+              inscription: i,
+              onCancel: () => _confirmCancel(i.id),
+            ),
+          ),
+          Gap(1.h),
+        ],
+        if (confirmed.isNotEmpty) ...[
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 5.w),
+            child: Text(
+              'Formations confirmées',
+              style: TextStyle(
+                color: AppColors.textDark,
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          Gap(1.h),
+          ...confirmed.map((i) => InscriptionCard(inscription: i)),
+          Gap(1.h),
+        ],
+        if (rejected.isNotEmpty) ...[
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 5.w),
+            child: Text(
+              'Demandes refusées',
+              style: TextStyle(
+                color: AppColors.textDark,
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          Gap(1.h),
+          ...rejected.map((i) => InscriptionCard(inscription: i)),
+        ],
+        Gap(2.h),
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
       ],
     );
   }

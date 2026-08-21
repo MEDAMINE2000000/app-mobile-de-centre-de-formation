@@ -1,16 +1,26 @@
+<<<<<<< HEAD
 import 'dart:async';
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:three_alfa_mobile_app/features/admin/model/admin_stats_model.dart';
+<<<<<<< HEAD
 import 'package:three_alfa_mobile_app/features/admin/model/user_admin_model.dart';
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 import 'package:three_alfa_mobile_app/features/formation/models/formation_model.dart';
 import 'package:three_alfa_mobile_app/features/inscription/model/inscription_model.dart';
 
 class AdminProvider extends ChangeNotifier {
+<<<<<<< HEAD
   final FirebaseFirestore _db;
 
   AdminProvider({FirebaseFirestore? db}) : _db = db ?? FirebaseFirestore.instance;
+=======
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 
   AdminStats stats = AdminStats.empty();
   bool isLoadingStats = false;
@@ -19,10 +29,13 @@ class AdminProvider extends ChangeNotifier {
   bool isLoadingInscriptions = false;
   bool hasErrorInscriptions = false;
 
+<<<<<<< HEAD
   List<UserAdminModel> allUsers = [];
   bool isLoadingUsers = false;
   bool hasErrorUsers = false;
 
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
   // Track processing per inscription ID
   final Set<String> _processingIds = {};
 
@@ -31,6 +44,7 @@ class AdminProvider extends ChangeNotifier {
 
   bool isProcessingId(String id) => _processingIds.contains(id);
 
+<<<<<<< HEAD
   bool _isSuperAdmin(String uid) {
     try {
       final user = allUsers.firstWhere((u) => u.uid == uid);
@@ -40,21 +54,27 @@ class AdminProvider extends ChangeNotifier {
     }
   }
 
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
   // ────────────────────────────────────────────────────
   // DASHBOARD STATS
   // ────────────────────────────────────────────────────
 
+<<<<<<< HEAD
   StreamSubscription<QuerySnapshot>? _usersStatsSub;
   StreamSubscription<QuerySnapshot>? _inscriptionsStatsSub;
 
   List<QueryDocumentSnapshot>? _lastUsersStatsDocs;
   List<QueryDocumentSnapshot>? _lastInscriptionsStatsDocs;
 
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
   Future<void> loadStats() async {
     isLoadingStats = true;
     errorMessage = null;
     notifyListeners();
 
+<<<<<<< HEAD
     _usersStatsSub?.cancel();
     _usersStatsSub = _db.collection('users').snapshots().listen((snapshot) {
       _lastUsersStatsDocs = snapshot.docs;
@@ -352,6 +372,35 @@ class AdminProvider extends ChangeNotifier {
       return false;
     } finally {
       _processingIds.remove(uid);
+=======
+    try {
+      final usersCount = await _db.collection('users').count().get();
+
+      final pendingCount = await _db
+          .collection('inscriptions')
+          .where('status', isEqualTo: 'pending')
+          .count()
+          .get();
+
+      final confirmedCount = await _db
+          .collection('inscriptions')
+          .where('status', isEqualTo: 'confirmed')
+          .count()
+          .get();
+
+      stats = AdminStats(
+        totalUsers: usersCount.count ?? 0,
+        totalFormations: FormationMockData.formations.length,
+        pendingInscriptions: pendingCount.count ?? 0,
+        confirmedInscriptions: confirmedCount.count ?? 0,
+      );
+    } on FirebaseException catch (e) {
+      errorMessage = 'Erreur lors du chargement des statistiques (${e.code}).';
+    } catch (e) {
+      errorMessage = 'Une erreur inattendue est survenue.';
+    } finally {
+      isLoadingStats = false;
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
       notifyListeners();
     }
   }
@@ -395,6 +444,7 @@ class AdminProvider extends ChangeNotifier {
       );
 
       // Build enriched InscriptionModel list
+<<<<<<< HEAD
       final validInscriptions = <InscriptionModel>[];
 
       for (var doc in snapshot.docs) {
@@ -420,6 +470,17 @@ class AdminProvider extends ChangeNotifier {
       }
 
       allInscriptions = validInscriptions;
+=======
+      allInscriptions = snapshot.docs.map((doc) {
+        final data = doc.data();
+        final uid = data['userId'] as String? ?? '';
+        return InscriptionModel.fromFirestore(
+          data,
+          doc.id,
+          userData: userMap[uid],
+        );
+      }).toList();
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 
       hasErrorInscriptions = false;
     } on FirebaseException catch (e) {
@@ -492,8 +553,19 @@ class AdminProvider extends ChangeNotifier {
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
+<<<<<<< HEAD
       // Remove it from the local list so it disappears from the screen
       allInscriptions.removeWhere((i) => i.id == inscriptionId);
+=======
+      // Update card in place without removing it from the list
+      final index = allInscriptions.indexWhere((i) => i.id == inscriptionId);
+      if (index != -1) {
+        allInscriptions[index] = allInscriptions[index].copyWith(
+          status: InscriptionStatus.confirmed,
+          updatedAt: DateTime.now(),
+        );
+      }
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 
       successMessage = 'Inscription acceptée avec succès.';
       return true;
@@ -510,6 +582,7 @@ class AdminProvider extends ChangeNotifier {
   }
 
   // ────────────────────────────────────────────────────
+<<<<<<< HEAD
   // DELETE INSCRIPTION
   // ────────────────────────────────────────────────────
 
@@ -540,6 +613,8 @@ class AdminProvider extends ChangeNotifier {
   }
 
   // ────────────────────────────────────────────────────
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
   // REJECT INSCRIPTION
   // ────────────────────────────────────────────────────
 
@@ -563,8 +638,20 @@ class AdminProvider extends ChangeNotifier {
           .doc(inscriptionId)
           .update(updateData);
 
+<<<<<<< HEAD
       // Remove it from the local list so it disappears from the screen immediately
       allInscriptions.removeWhere((i) => i.id == inscriptionId);
+=======
+      // Update card in place without removing it from the list
+      final index = allInscriptions.indexWhere((i) => i.id == inscriptionId);
+      if (index != -1) {
+        allInscriptions[index] = allInscriptions[index].copyWith(
+          status: InscriptionStatus.rejected,
+          updatedAt: DateTime.now(),
+          centreNote: note?.trim(),
+        );
+      }
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 
       successMessage = 'Inscription refusée avec succès.';
       return true;
@@ -587,6 +674,7 @@ class AdminProvider extends ChangeNotifier {
   }
 
   void reset() {
+<<<<<<< HEAD
     _usersStatsSub?.cancel();
     _inscriptionsStatsSub?.cancel();
     _lastUsersStatsDocs = null;
@@ -600,10 +688,19 @@ class AdminProvider extends ChangeNotifier {
     isLoadingUsers = false;
     hasErrorInscriptions = false;
     hasErrorUsers = false;
+=======
+    stats = AdminStats.empty();
+    allInscriptions = [];
+    _processingIds.clear();
+    isLoadingStats = false;
+    isLoadingInscriptions = false;
+    hasErrorInscriptions = false;
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
     errorMessage = null;
     successMessage = null;
     notifyListeners();
   }
+<<<<<<< HEAD
 
   @override
   void dispose() {
@@ -611,4 +708,6 @@ class AdminProvider extends ChangeNotifier {
     _inscriptionsStatsSub?.cancel();
     super.dispose();
   }
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 }

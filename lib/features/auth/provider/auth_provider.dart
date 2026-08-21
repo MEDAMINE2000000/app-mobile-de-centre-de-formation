@@ -19,6 +19,7 @@ class AuthProvider extends ChangeNotifier {
 
   StreamSubscription<User?>? _authSubscription;
 
+<<<<<<< HEAD
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
 
@@ -26,6 +27,10 @@ class AuthProvider extends ChangeNotifier {
       : _auth = auth ?? FirebaseAuth.instance,
         _firestore = firestore ?? FirebaseFirestore.instance {
     _authSubscription = _auth.authStateChanges().listen((
+=======
+  AuthProvider() {
+    _authSubscription = FirebaseAuth.instance.authStateChanges().listen((
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
       firebaseUser,
     ) async {
       _setUser(firebaseUser);
@@ -68,7 +73,11 @@ class AuthProvider extends ChangeNotifier {
   /// Reads the user's role from their Firestore document at users/{uid}.
   /// Sets [isAdmin] to true only when the document's `role` field is 'admin'.
   Future<void> checkUserRole() async {
+<<<<<<< HEAD
     final firebaseUser = _auth.currentUser;
+=======
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 
     if (firebaseUser == null) {
       isAdmin = false;
@@ -76,6 +85,7 @@ class AuthProvider extends ChangeNotifier {
       return;
     }
 
+<<<<<<< HEAD
     // Super Admin recognised immediately by email — no Firestore read needed
     if (firebaseUser.email == 'medhammi198@gmail.com') {
       isAdmin = true;
@@ -93,6 +103,17 @@ class AuthProvider extends ChangeNotifier {
       if (doc.exists) {
         final role = doc.data()?['role'] as String? ?? 'user';
         isAdmin = role == 'admin' || role == 'super_admin';
+=======
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(firebaseUser.uid)
+          .get();
+
+      if (doc.exists) {
+        final data = doc.data();
+        isAdmin = data?['role'] == 'admin';
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
       } else {
         isAdmin = false;
       }
@@ -116,12 +137,16 @@ class AuthProvider extends ChangeNotifier {
   // ────────────────────────────────────────────────────
 
   Future<bool> login(String email, String password) async {
+<<<<<<< HEAD
     final stopwatch = Stopwatch()..start();
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
     isLoading = true;
     errorMessage = null;
     notifyListeners();
 
     try {
+<<<<<<< HEAD
       // 10-second timeout to avoid infinite loading spinner
       final credential = await _auth
           .signInWithEmailAndPassword(
@@ -145,14 +170,30 @@ class AuthProvider extends ChangeNotifier {
       final ms = stopwatch.elapsedMilliseconds;
       final s = ms / 1000;
       debugPrint('Temps de connexion : $ms ms (${s.toStringAsFixed(2)} s)');
+=======
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email.trim(),
+        password: password.trim(),
+      );
+
+      _setUser(credential.user);
+
+      await refreshUser();
+      await checkUserRole();
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 
       return true;
     } on FirebaseAuthException catch (e) {
       errorMessage = _mapAuthError(e.code);
       return false;
     } catch (e) {
+<<<<<<< HEAD
       debugPrint('LOGIN ERROR: $e');
       errorMessage = 'Une erreur inattendue est survenue. Réessayez.';
+=======
+      print('LOGIN ERROR: $e');
+      errorMessage = 'Une erreur inattendue est survenue.';
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
       return false;
     } finally {
       isLoading = false;
@@ -177,7 +218,11 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+<<<<<<< HEAD
       final credential = await _auth
+=======
+      final credential = await FirebaseAuth.instance
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
           .createUserWithEmailAndPassword(
             email: email.trim(),
             password: password.trim(),
@@ -195,7 +240,11 @@ class AuthProvider extends ChangeNotifier {
       // ── role: 'user' is ALWAYS forced here. Authorization is determined
       // by reading users/{uid}.role from Firestore. Security Rules reject
       // any client attempt to write role != 'user' on their own document. ──
+<<<<<<< HEAD
       await _firestore.collection('users').doc(uid).set({
+=======
+      await FirebaseFirestore.instance.collection('users').doc(uid).set({
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
         'uid': uid,
         'nom': nom.trim(),
         'prenom': prenom.trim(),
@@ -237,7 +286,11 @@ class AuthProvider extends ChangeNotifier {
 
   Future<bool> sendEmailVerification() async {
     try {
+<<<<<<< HEAD
       final currentUser = _auth.currentUser;
+=======
+      final currentUser = FirebaseAuth.instance.currentUser;
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 
       if (currentUser == null) {
         errorMessage = 'Aucun utilisateur connecté.';
@@ -269,7 +322,11 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+<<<<<<< HEAD
       final currentUser = _auth.currentUser;
+=======
+      final currentUser = FirebaseAuth.instance.currentUser;
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 
       if (currentUser == null) {
         _setUser(null);
@@ -279,7 +336,11 @@ class AuthProvider extends ChangeNotifier {
 
       await currentUser.reload();
 
+<<<<<<< HEAD
       _setUser(_auth.currentUser);
+=======
+      _setUser(FirebaseAuth.instance.currentUser);
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 
       if (user == null) {
         return false;
@@ -298,7 +359,11 @@ class AuthProvider extends ChangeNotifier {
 
       if (e.code == 'user-not-found') {
         _setUser(null);
+<<<<<<< HEAD
         await _auth.signOut();
+=======
+        await FirebaseAuth.instance.signOut();
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
       }
 
       return false;
@@ -317,7 +382,11 @@ class AuthProvider extends ChangeNotifier {
   // ────────────────────────────────────────────────────
 
   Future<void> refreshUser() async {
+<<<<<<< HEAD
     final firebaseUser = _auth.currentUser;
+=======
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 
     if (firebaseUser == null) {
       _setUser(null);
@@ -327,7 +396,11 @@ class AuthProvider extends ChangeNotifier {
     try {
       await firebaseUser.reload();
 
+<<<<<<< HEAD
       _setUser(_auth.currentUser);
+=======
+      _setUser(FirebaseAuth.instance.currentUser);
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 
       print('REFRESHED USER: $user');
     } on FirebaseAuthException catch (e) {
@@ -335,7 +408,11 @@ class AuthProvider extends ChangeNotifier {
 
       if (e.code == 'user-not-found') {
         _setUser(null);
+<<<<<<< HEAD
         await _auth.signOut();
+=======
+        await FirebaseAuth.instance.signOut();
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
       } else {
         errorMessage = _mapAuthError(e.code);
         notifyListeners();
@@ -355,7 +432,11 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+<<<<<<< HEAD
       await _auth.sendPasswordResetEmail(email: email.trim());
+=======
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email.trim());
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 
       return true;
     } on FirebaseAuthException catch (e) {
@@ -377,7 +458,11 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> logout() async {
     try {
+<<<<<<< HEAD
       await _auth.signOut();
+=======
+      await FirebaseAuth.instance.signOut();
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 
       isAdmin = false;
       _setUser(null);
@@ -396,13 +481,21 @@ class AuthProvider extends ChangeNotifier {
   String _mapAuthError(String code) {
     switch (code) {
       case 'user-not-found':
+<<<<<<< HEAD
         return "Ce compte n'existe pas. Vérifiez votre adresse e-mail ou créez un compte.";
+=======
+        return "Aucun compte n'est associé à cet e-mail.";
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
       case 'wrong-password':
         return 'Mot de passe incorrect.';
       case 'invalid-email':
         return "L'adresse e-mail est invalide.";
       case 'invalid-credential':
+<<<<<<< HEAD
         return "Les informations d'identification sont invalides. Vérifiez votre adresse e-mail ou votre mot de passe.";
+=======
+        return 'Identifiants incorrects.';
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
       case 'user-disabled':
         return 'Ce compte a été désactivé.';
       case 'too-many-requests':

@@ -16,6 +16,7 @@ import 'package:three_alfa_mobile_app/features/inscription/view/inscription_scre
 import 'package:three_alfa_mobile_app/features/admin/view/admin_dashboard_screen.dart';
 import 'package:three_alfa_mobile_app/features/admin/view/manage_inscriptions_screen.dart';
 import 'package:three_alfa_mobile_app/features/admin/view/admin_placeholder_screen.dart';
+<<<<<<< HEAD
 import 'package:three_alfa_mobile_app/features/admin/view/manage_users_screen.dart';
 import 'package:three_alfa_mobile_app/features/admin/view/user_details_screen.dart';
 import 'package:three_alfa_mobile_app/features/admin/model/user_admin_model.dart';
@@ -26,6 +27,14 @@ import 'package:three_alfa_mobile_app/features/admin/view/admin_statistics_scree
 GoRouter appRouter(AuthProvider authProvider) {
   return GoRouter(
     // Utilisateur commence par le Welcome
+=======
+
+import 'package:three_alfa_mobile_app/features/welcome/view/welcome_screen.dart';
+
+GoRouter appRouter(AuthProvider authProvider) {
+  return GoRouter(
+    // المستخدم غير المتصل يبدأ من Welcome.
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
     initialLocation: '/welcome',
 
     refreshListenable: Listenable.merge([
@@ -61,14 +70,23 @@ GoRouter appRouter(AuthProvider authProvider) {
       // 1. المستخدم غير متصل
       // ─────────────────────────────────────────────
       if (user == null) {
+<<<<<<< HEAD
         // يسمح له بصفحات التسجيل والدخول وWelcome
         if (authPaths.contains(path) ||
             path == '/welcome') {
+=======
+        // يسمح له بصفحات التسجيل والدخول وWelcome.
+        if (authPaths.contains(path) || path == '/welcome') {
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
           return null;
         }
 
         // يمنعه من Home/Profile/Admin...
+<<<<<<< HEAD
         return '/login';
+=======
+        return '/welcome';
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
       }
 
       // ─────────────────────────────────────────────
@@ -102,7 +120,11 @@ GoRouter appRouter(AuthProvider authProvider) {
       }
 
       // ─────────────────────────────────────────────
+<<<<<<< HEAD
       // 5. مستخدم متصل يحاول الرجوع إلى Login/Register/Welcome
+=======
+      // 5. مستخدم متصل يحاول الرجوع إلى Login/Register
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
       // ─────────────────────────────────────────────
       if (authPaths.contains(path) ||
           path == '/verify-email' ||
@@ -182,6 +204,7 @@ GoRouter appRouter(AuthProvider authProvider) {
 
       GoRoute(
         path: '/admin/users',
+<<<<<<< HEAD
         builder: (context, state) => const ManageUsersScreen(),
       ),
 
@@ -191,6 +214,10 @@ GoRouter appRouter(AuthProvider authProvider) {
           final user = state.extra as UserAdminModel;
           return UserDetailsScreen(user: user);
         },
+=======
+        builder: (context, state) =>
+            const AdminPlaceholderScreen(title: 'Gestion des utilisateurs'),
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
       ),
 
       GoRoute(
@@ -209,11 +236,14 @@ GoRouter appRouter(AuthProvider authProvider) {
         builder: (context, state) =>
             const AdminPlaceholderScreen(title: 'Paramètres'),
       ),
+<<<<<<< HEAD
 
       GoRoute(
         path: '/admin/statistics',
         builder: (context, state) => const AdminStatisticsScreen(),
       ),
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
     ],
   );
 }

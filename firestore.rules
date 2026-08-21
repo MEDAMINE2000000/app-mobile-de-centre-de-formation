@@ -9,10 +9,16 @@ service cloud.firestore {
 
     function isAdmin() {
       return isSignedIn()
+<<<<<<< HEAD
           && (
             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super_admin']
             || request.auth.token.email == 'medhammi198@gmail.com'
           );
+=======
+          && get(
+            /databases/$(database)/documents/users/$(request.auth.uid)
+          ).data.role == 'admin';
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
     }
 
     function isOwner(uid) {
@@ -47,6 +53,7 @@ service cloud.firestore {
                     && request.resource.data.userId == request.auth.uid
                     && request.resource.data.status == 'pending';
 
+<<<<<<< HEAD
       allow delete: if (isSignedIn()
                     && resource.data.userId == request.auth.uid)
                     || isAdmin();
@@ -59,6 +66,13 @@ service cloud.firestore {
                           .hasOnly(['decisionRead', 'readAt'])
                       && request.resource.data.decisionRead == true
                     );
+=======
+      allow delete: if isSignedIn()
+                    && resource.data.userId == request.auth.uid
+                    && resource.data.status == 'pending';
+
+      allow update: if isAdmin();
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
     }
   }
 }

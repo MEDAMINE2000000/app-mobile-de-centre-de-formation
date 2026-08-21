@@ -5,11 +5,18 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:three_alfa_mobile_app/core/constants/app_colors.dart';
 
+<<<<<<< HEAD
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:three_alfa_mobile_app/core/widgets/shared_button.dart';
 import 'package:three_alfa_mobile_app/features/auth/provider/auth_provider.dart';
 import 'package:three_alfa_mobile_app/features/formation/models/formation_model.dart';
 import 'package:three_alfa_mobile_app/features/inscription/provider/inscription_provider .dart';
+=======
+import 'package:three_alfa_mobile_app/core/widgets/shared_button.dart';
+import 'package:three_alfa_mobile_app/features/auth/provider/auth_provider.dart';
+import 'package:three_alfa_mobile_app/features/formation/models/formation_model.dart';
+import 'package:three_alfa_mobile_app/features/inscription/provider/inscription_provider%20.dart';
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 
 class FormationDetailDialog extends StatefulWidget {
   final Formation formation;
@@ -42,6 +49,7 @@ class _FormationDetailDialogState extends State<FormationDetailDialog> {
 
     if (!mounted) return;
 
+<<<<<<< HEAD
     final overlayState = Overlay.of(context);
 
     context.pop(); // close the dialog either way
@@ -133,6 +141,22 @@ class _FormationDetailDialogState extends State<FormationDetailDialog> {
         overlayEntry.remove();
       }
     });
+=======
+    context.pop(); // close the dialog either way
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          success
+              ? (inscriptionProvider.successMessage ?? 'Demande envoyée.')
+              : (inscriptionProvider.errorMessage ??
+                    'Erreur lors de l\'envoi.'),
+        ),
+        backgroundColor: success ? AppColors.success : AppColors.error,
+        duration: const Duration(seconds: 4),
+      ),
+    );
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
   }
 
   @override

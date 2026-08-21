@@ -55,8 +55,13 @@ class BottomNavBar extends StatelessWidget {
               backgroundGradient: AppColors.gradient,
             ),
             GButton(
+<<<<<<< HEAD
               icon: Icons.assignment_rounded,
               text: 'Demandes',
+=======
+              icon: Icons.search_rounded,
+              text: 'Recherche',
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
               backgroundGradient: AppColors.gradient,
             ),
             GButton(

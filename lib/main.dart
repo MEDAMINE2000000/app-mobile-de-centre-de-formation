@@ -11,10 +11,14 @@ import 'package:three_alfa_mobile_app/features/profile/provider/profile_provider
 
 import 'features/admin/provider/admin_provider.dart';
 
+<<<<<<< HEAD
 import 'package:three_alfa_mobile_app/core/utils/performance_monitor.dart';
 
 void main() async {
   PerformanceMonitor.start('startup');
+=======
+void main() async {
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
@@ -29,10 +33,13 @@ void main() async {
       child: const MyApp(),
     ),
   );
+<<<<<<< HEAD
 
   WidgetsBinding.instance.addPostFrameCallback((_) {
     PerformanceMonitor.stop('startup', customMessage: 'Temps de démarrage');
   });
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 }
 
 class MyApp extends StatelessWidget {

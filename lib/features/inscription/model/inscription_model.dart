@@ -12,12 +12,15 @@ class InscriptionModel {
   final DateTime? updatedAt;
   final String? centreNote;
 
+<<<<<<< HEAD
   /// true when the user has acknowledged the centre's decision (clicked « ✓ Lu »)
   final bool decisionRead;
 
   /// timestamp when the user clicked « ✓ Lu »
   final DateTime? readAt;
 
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
   // User profile information from 'users' collection
   final String? userNom;
   final String? userPrenom;
@@ -35,8 +38,11 @@ class InscriptionModel {
     this.createdAt,
     this.updatedAt,
     this.centreNote,
+<<<<<<< HEAD
     this.decisionRead = false,
     this.readAt,
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
     this.userNom,
     this.userPrenom,
     this.userEmail,
@@ -50,6 +56,7 @@ class InscriptionModel {
     return full.isNotEmpty ? full : 'Utilisateur inconnu';
   }
 
+<<<<<<< HEAD
   /// Returns true if this inscription has a final decision (confirmed or rejected)
   /// and the user has NOT yet acknowledged it.
   bool get hasUnreadDecision {
@@ -58,6 +65,8 @@ class InscriptionModel {
         !decisionRead;
   }
 
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
   InscriptionModel copyWith({
     String? id,
     String? userId,
@@ -69,8 +78,11 @@ class InscriptionModel {
     DateTime? createdAt,
     DateTime? updatedAt,
     String? centreNote,
+<<<<<<< HEAD
     bool? decisionRead,
     DateTime? readAt,
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
     String? userNom,
     String? userPrenom,
     String? userEmail,
@@ -88,8 +100,11 @@ class InscriptionModel {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       centreNote: centreNote ?? this.centreNote,
+<<<<<<< HEAD
       decisionRead: decisionRead ?? this.decisionRead,
       readAt: readAt ?? this.readAt,
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
       userNom: userNom ?? this.userNom,
       userPrenom: userPrenom ?? this.userPrenom,
       userEmail: userEmail ?? this.userEmail,
@@ -117,8 +132,11 @@ class InscriptionModel {
           ? (data['updatedAt']).toDate()
           : null,
       centreNote: data['centreNote'] as String?,
+<<<<<<< HEAD
       decisionRead: (data['decisionRead'] as bool?) ?? false,
       readAt: data['readAt'] != null ? (data['readAt']).toDate() : null,
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
       userNom: userData?['nom'] as String?,
       userPrenom: userData?['prenom'] as String?,
       userEmail: userData?['email'] as String?,

@@ -11,7 +11,10 @@ class AppColors {
   static const textMute = Color(0xFF6B6A86);
   static const white = Colors.white;
   static const success = Colors.green;
+<<<<<<< HEAD
   static const warning = Colors.orange;
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
   static const error = Colors.red;
   static const grey = Colors.grey;
   static const containerGradient = LinearGradient(

@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:three_alfa_mobile_app/features/auth/provider/auth_provider.dart';
+=======
+import 'package:firebase_auth/firebase_auth.dart';
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sizer/sizer.dart';
@@ -34,9 +38,17 @@ class AppBarrSection extends StatelessWidget implements PreferredSizeWidget {
           actions: [
             Padding(
               padding: EdgeInsets.only(right: 4.w),
+<<<<<<< HEAD
               child: Consumer<AuthProvider>(
                 builder: (context, authProvider, child) {
                   final user = authProvider.user;
+=======
+              child: StreamBuilder<User?>(
+                stream: FirebaseAuth.instance.authStateChanges(),
+                builder: (context, snapshot) {
+                  final user = snapshot.data;
+                  print(user);
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
                   // ── Authenticated → CircleAvatar ──
                   if (user != null) {
                     return GestureDetector(

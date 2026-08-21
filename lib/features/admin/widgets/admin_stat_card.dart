@@ -21,6 +21,7 @@ class AdminStatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+<<<<<<< HEAD
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -31,11 +32,23 @@ class AdminStatCard extends StatelessWidget {
             color: accentColor.withOpacity(0.08),
             blurRadius: 20,
             offset: const Offset(0, 8),
+=======
+      padding: EdgeInsets.all(3.5.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+<<<<<<< HEAD
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
@@ -77,6 +90,34 @@ class AdminStatCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ],
+=======
+        children: [
+          Container(
+            padding: EdgeInsets.all(2.2.w),
+            decoration: BoxDecoration(
+              color: accentColor.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(icon, color: accentColor, size: 5.5.w),
+          ),
+          Gap(1.6.h),
+          Text(
+            value,
+            style: TextStyle(
+              color: AppColors.textDark,
+              fontSize: 19.sp,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Gap(0.3.h),
+          Text(
+            label,
+            style: TextStyle(
+              color: AppColors.textMute,
+              fontSize: 10.5.sp,
+              fontWeight: FontWeight.w500,
+            ),
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
           ),
         ],
       ),

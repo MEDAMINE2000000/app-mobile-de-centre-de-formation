@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:three_alfa_mobile_app/core/utils/performance_monitor.dart';
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 
 import 'package:three_alfa_mobile_app/features/formation/view/formation_screen.dart';
 import 'package:three_alfa_mobile_app/features/home/widgets/bottom_nav_bar.dart';
@@ -25,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   @override
+<<<<<<< HEAD
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -44,6 +48,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(index: _currentPageIndex, children: _pages),
@@ -52,16 +58,22 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: _currentPageIndex,
         onTap: (index) {
           if (index == _currentPageIndex) return;
+<<<<<<< HEAD
           
           final from = _pageName(_currentPageIndex);
           final to = _pageName(index);
           PerformanceMonitor.start('nav_${from}_$to');
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 
           setState(() {
             _currentPageIndex = index;
           });
+<<<<<<< HEAD
           
           PerformanceMonitor.stopOnNextFrame('nav_${from}_$to', customMessage: 'Temps de navigation [$from -> $to]');
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
         },
       ),
     );

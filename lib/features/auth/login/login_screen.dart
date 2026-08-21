@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:three_alfa_mobile_app/core/utils/performance_monitor.dart';
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -34,8 +37,11 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _onSeConnecter() async {
     if (!_formKey.currentState!.validate()) return;
 
+<<<<<<< HEAD
     PerformanceMonitor.start('connexion');
 
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
     final authProvider = context.read<AuthProvider>();
 
     final success = await authProvider.login(
@@ -43,6 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
       motDePasseController.text.trim(),
     );
 
+<<<<<<< HEAD
     if (success) {
       if (authProvider.isAdmin) {
         PerformanceMonitor.start('nav_Login_Admin');
@@ -83,6 +90,17 @@ class _LoginScreenState extends State<LoginScreen> {
             duration: const Duration(seconds: 5),
           ),
         );
+=======
+    if (!mounted) return;
+
+    if (!success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(authProvider.errorMessage ?? 'Échec de la connexion.'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
     }
 
     // لا تستعمل context.go هنا.

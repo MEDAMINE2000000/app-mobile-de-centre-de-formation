@@ -6,6 +6,10 @@ import 'package:sizer/sizer.dart';
 import 'package:three_alfa_mobile_app/core/constants/app_colors.dart';
 import 'package:three_alfa_mobile_app/features/admin/provider/admin_provider.dart';
 import 'package:three_alfa_mobile_app/features/inscription/model/inscription_model.dart';
+<<<<<<< HEAD
+=======
+import 'package:three_alfa_mobile_app/features/inscription/widgets/inscription_status_badge.dart';
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 
 class ManageInscriptionsScreen extends StatefulWidget {
   const ManageInscriptionsScreen({super.key});
@@ -37,6 +41,15 @@ class _ManageInscriptionsScreenState extends State<ManageInscriptionsScreen> {
     context.read<AdminProvider>().loadAllInscriptions();
   }
 
+<<<<<<< HEAD
+=======
+  void _changeFilter(String value) {
+    setState(() {
+      _statusFilter = value;
+    });
+  }
+
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
   Future<void> _confirmAccept(InscriptionModel inscription) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -86,6 +99,7 @@ class _ManageInscriptionsScreenState extends State<ManageInscriptionsScreen> {
     );
   }
 
+<<<<<<< HEAD
   Future<void> _confirmDelete(InscriptionModel inscription) async {
     final provider = context.read<AdminProvider>();
     final confirm = await showDialog<bool>(
@@ -128,6 +142,8 @@ class _ManageInscriptionsScreenState extends State<ManageInscriptionsScreen> {
     }
   }
 
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
   Future<void> _confirmReject(InscriptionModel inscription) async {
     final noteController = TextEditingController();
 
@@ -218,7 +234,11 @@ class _ManageInscriptionsScreenState extends State<ManageInscriptionsScreen> {
           'Gestion des Inscriptions',
           style: TextStyle(
             color: Colors.white,
+<<<<<<< HEAD
             fontSize: 20.sp,
+=======
+            fontSize: 14.sp,
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -240,7 +260,11 @@ class _ManageInscriptionsScreenState extends State<ManageInscriptionsScreen> {
                     hintText: 'Rechercher par nom, email, tél, formation...',
                     hintStyle: TextStyle(
                       color: AppColors.textMute,
+<<<<<<< HEAD
                       fontSize: 13.sp,
+=======
+                      fontSize: 11.sp,
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
                     ),
                     prefixIcon: const Icon(
                       Icons.search_rounded,
@@ -267,6 +291,45 @@ class _ManageInscriptionsScreenState extends State<ManageInscriptionsScreen> {
                     ),
                   ),
                 ),
+<<<<<<< HEAD
+=======
+                Gap(1.5.h),
+                // Filter Chips Row
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      _FilterChip(
+                        label: 'Toutes',
+                        value: 'all',
+                        current: _statusFilter,
+                        onTap: _changeFilter,
+                      ),
+                      Gap(2.w),
+                      _FilterChip(
+                        label: 'En attente',
+                        value: 'pending',
+                        current: _statusFilter,
+                        onTap: _changeFilter,
+                      ),
+                      Gap(2.w),
+                      _FilterChip(
+                        label: 'Acceptées',
+                        value: 'confirmed',
+                        current: _statusFilter,
+                        onTap: _changeFilter,
+                      ),
+                      Gap(2.w),
+                      _FilterChip(
+                        label: 'Refusées',
+                        value: 'rejected',
+                        current: _statusFilter,
+                        onTap: _changeFilter,
+                      ),
+                    ],
+                  ),
+                ),
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
               ],
             ),
           ),
@@ -354,7 +417,11 @@ class _ManageInscriptionsScreenState extends State<ManageInscriptionsScreen> {
                   'Aucune inscription trouvée.',
                   style: TextStyle(
                     color: AppColors.textMute,
+<<<<<<< HEAD
                     fontSize: 16.sp,
+=======
+                    fontSize: 12.sp,
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -365,6 +432,7 @@ class _ManageInscriptionsScreenState extends State<ManageInscriptionsScreen> {
       );
     }
 
+<<<<<<< HEAD
     // 4. Group by User
     final groupedInscriptions = <String, List<InscriptionModel>>{};
     for (final inscription in filteredList) {
@@ -386,12 +454,28 @@ class _ManageInscriptionsScreenState extends State<ManageInscriptionsScreen> {
           onAccept: _confirmAccept,
           onReject: _confirmReject,
           onDelete: _confirmDelete,
+=======
+    // 4. Inscription Cards List
+    return ListView.builder(
+      padding: EdgeInsets.symmetric(vertical: 1.5.h),
+      itemCount: filteredList.length,
+      itemBuilder: (context, index) {
+        final inscription = filteredList[index];
+        final isProcessing = admin.isProcessingId(inscription.id);
+
+        return _AdminInscriptionCard(
+          inscription: inscription,
+          isProcessing: isProcessing,
+          onAccept: () => _confirmAccept(inscription),
+          onReject: () => _confirmReject(inscription),
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
         );
       },
     );
   }
 }
 
+<<<<<<< HEAD
 class _UserInscriptionGroupCard extends StatelessWidget {
   final List<InscriptionModel> inscriptions;
   final AdminProvider adminProvider;
@@ -405,10 +489,24 @@ class _UserInscriptionGroupCard extends StatelessWidget {
     required this.onAccept,
     required this.onReject,
     required this.onDelete,
+=======
+class _FilterChip extends StatelessWidget {
+  final String label;
+  final String value;
+  final String current;
+  final ValueChanged<String> onTap;
+
+  const _FilterChip({
+    required this.label,
+    required this.value,
+    required this.current,
+    required this.onTap,
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
   });
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final first = inscriptions.first;
     final String initiales =
         (first.userPrenom?.isNotEmpty == true
@@ -501,6 +599,27 @@ class _UserInscriptionGroupCard extends StatelessWidget {
               onDelete: () => onDelete(inscription),
             );
           }).toList(),
+=======
+    final isSelected = value == current;
+    return GestureDetector(
+      onTap: () => onTap(value),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 0.9.h),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.pink
+              : Colors.white.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 11.sp,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+          ),
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
         ),
       ),
     );
@@ -512,19 +631,26 @@ class _AdminInscriptionCard extends StatelessWidget {
   final bool isProcessing;
   final VoidCallback onAccept;
   final VoidCallback onReject;
+<<<<<<< HEAD
   final VoidCallback onDelete;
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
 
   const _AdminInscriptionCard({
     required this.inscription,
     required this.isProcessing,
     required this.onAccept,
     required this.onReject,
+<<<<<<< HEAD
     required this.onDelete,
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
+<<<<<<< HEAD
       margin: EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
@@ -540,10 +666,26 @@ class _AdminInscriptionCard extends StatelessWidget {
         border: Border.all(
           color: AppColors.pink.withValues(alpha: 0.2),
         ),
+=======
+      margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFEEEEF5)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+<<<<<<< HEAD
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -559,10 +701,44 @@ class _AdminInscriptionCard extends StatelessWidget {
                 ),
               ),
               Gap(3.w),
+=======
+          // ── Header: Formation Title + Category + Status Badge ──
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (inscription.formationImageUrl.isNotEmpty) ...[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    inscription.formationImageUrl,
+                    width: 14.w,
+                    height: 14.w,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 14.w,
+                        height: 14.w,
+                        decoration: BoxDecoration(
+                          color: AppColors.navy2,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.school_rounded,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                Gap(3.w),
+              ],
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+<<<<<<< HEAD
                     Text(
                       inscription.formationTitle,
                       style: TextStyle(
@@ -591,10 +767,31 @@ class _AdminInscriptionCard extends StatelessWidget {
                           ),
                         ),
                       ],
+=======
+                    if (inscription.formationCategoryName.isNotEmpty) ...[
+                      Text(
+                        inscription.formationCategoryName.toUpperCase(),
+                        style: TextStyle(
+                          color: AppColors.pink,
+                          fontSize: 9.5.sp,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Gap(0.3.h),
+                    ],
+                    Text(
+                      inscription.formationTitle,
+                      style: TextStyle(
+                        color: AppColors.textDark,
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w800,
+                      ),
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
                     ),
                   ],
                 ),
               ),
+<<<<<<< HEAD
             ],
           ),
           Gap(1.5.h),
@@ -609,13 +806,117 @@ class _AdminInscriptionCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 11.sp,
                   color: AppColors.textMute,
+=======
+              InscriptionStatusBadge(
+                status: inscription.status,
+                customLabel: inscription.status == InscriptionStatus.confirmed
+                    ? 'Accepted'
+                    : null,
+              ),
+            ],
+          ),
+
+          Gap(1.6.h),
+          const Divider(height: 1, color: Color(0xFFF0F0F5)),
+          Gap(1.6.h),
+
+          // ── User Profile Information ──
+          Row(
+            children: [
+              const Icon(Icons.person_rounded, color: AppColors.pink, size: 18),
+              Gap(2.w),
+              Expanded(
+                child: Text(
+                  inscription.userFullName,
+                  style: TextStyle(
+                    color: AppColors.textDark,
+                    fontSize: 11.5.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
                 ),
               ),
             ],
           ),
+<<<<<<< HEAD
           
           if (inscription.centreNote != null && inscription.centreNote!.isNotEmpty) ...[
             Gap(1.5.h),
+=======
+          if (inscription.userEmail != null &&
+              inscription.userEmail!.isNotEmpty) ...[
+            Gap(0.8.h),
+            Row(
+              children: [
+                const Icon(
+                  Icons.email_outlined,
+                  color: AppColors.textMute,
+                  size: 16,
+                ),
+                Gap(2.w),
+                Expanded(
+                  child: Text(
+                    inscription.userEmail!,
+                    style: TextStyle(
+                      color: AppColors.textMute,
+                      fontSize: 10.5.sp,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+          if (inscription.userTelephone != null &&
+              inscription.userTelephone!.isNotEmpty) ...[
+            Gap(0.8.h),
+            Row(
+              children: [
+                const Icon(
+                  Icons.phone_outlined,
+                  color: AppColors.textMute,
+                  size: 16,
+                ),
+                Gap(2.w),
+                Expanded(
+                  child: Text(
+                    inscription.userTelephone!,
+                    style: TextStyle(
+                      color: AppColors.textMute,
+                      fontSize: 10.5.sp,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+
+          // ── Inscription Date ──
+          if (inscription.createdAt != null) ...[
+            Gap(0.8.h),
+            Row(
+              children: [
+                const Icon(
+                  Icons.calendar_today_outlined,
+                  color: AppColors.textMute,
+                  size: 16,
+                ),
+                Gap(2.w),
+                Text(
+                  _formatDate(inscription.createdAt!),
+                  style: TextStyle(
+                    color: AppColors.textMute,
+                    fontSize: 10.5.sp,
+                  ),
+                ),
+              ],
+            ),
+          ],
+
+          // ── Centre Note (if rejected with note) ──
+          if (inscription.centreNote != null &&
+              inscription.centreNote!.isNotEmpty) ...[
+            Gap(1.2.h),
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
             Container(
               padding: EdgeInsets.all(2.5.w),
               decoration: BoxDecoration(
@@ -635,10 +936,17 @@ class _AdminInscriptionCard extends StatelessWidget {
                   Gap(2.w),
                   Expanded(
                     child: Text(
+<<<<<<< HEAD
                       'Note: \${inscription.centreNote!}',
                       style: TextStyle(
                         color: AppColors.textDark,
                         fontSize: 12.sp,
+=======
+                      'Note: ${inscription.centreNote!}',
+                      style: TextStyle(
+                        color: AppColors.textDark,
+                        fontSize: 10.sp,
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
                       ),
                     ),
                   ),
@@ -649,6 +957,7 @@ class _AdminInscriptionCard extends StatelessWidget {
 
           Gap(1.8.h),
 
+<<<<<<< HEAD
           // ── Action Buttons ──
           Row(
             children: [
@@ -660,6 +969,11 @@ class _AdminInscriptionCard extends StatelessWidget {
                 tooltip: 'Supprimer l\'inscription',
               ),
               Gap(1.w),
+=======
+          // ── Accept / Reject Action Buttons ──
+          Row(
+            children: [
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
               // Reject Button
               Expanded(
                 child: OutlinedButton.icon(
@@ -727,4 +1041,7 @@ class _AdminInscriptionCard extends StatelessWidget {
     return '$day/$month/$year $hour:$minute';
   }
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> d691313802b9e9f6c22ed314999a4aa60dcad9b1
