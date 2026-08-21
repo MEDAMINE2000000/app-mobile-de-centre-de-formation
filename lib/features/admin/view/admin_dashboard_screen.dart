@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:three_alfa_mobile_app/core/utils/performance_monitor.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +23,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      PerformanceMonitor.stop('connexion', customMessage: 'Temps de connexion');
+      PerformanceMonitor.stop('nav_Login_Admin', customMessage: 'Temps de navigation [Login -> Admin]');
       context.read<AdminProvider>().loadStats();
     });
   }

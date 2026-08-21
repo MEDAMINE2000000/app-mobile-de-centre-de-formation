@@ -19,8 +19,13 @@ class AuthProvider extends ChangeNotifier {
 
   StreamSubscription<User?>? _authSubscription;
 
-  AuthProvider() {
-    _authSubscription = FirebaseAuth.instance.authStateChanges().listen((
+  final FirebaseAuth _auth;
+  final FirebaseFirestore _firestore;
+
+  AuthProvider({FirebaseAuth? auth, FirebaseFirestore? firestore})
+      : _auth = auth ?? FirebaseAuth.instance,
+        _firestore = firestore ?? FirebaseFirestore.instance {
+    _authSubscription = _auth.authStateChanges().listen((
       firebaseUser,
     ) async {
       _setUser(firebaseUser);
@@ -63,7 +68,7 @@ class AuthProvider extends ChangeNotifier {
   /// Reads the user's role from their Firestore document at users/{uid}.
   /// Sets [isAdmin] to true only when the document's `role` field is 'admin'.
   Future<void> checkUserRole() async {
-    final firebaseUser = FirebaseAuth.instance.currentUser;
+    final firebaseUser = _auth.currentUser;
 
     if (firebaseUser == null) {
       isAdmin = false;
@@ -79,7 +84,7 @@ class AuthProvider extends ChangeNotifier {
     }
 
     try {
-      final doc = await FirebaseFirestore.instance
+      final doc = await _firestore
           .collection('users')
           .doc(firebaseUser.uid)
           .get()
@@ -111,13 +116,14 @@ class AuthProvider extends ChangeNotifier {
   // ────────────────────────────────────────────────────
 
   Future<bool> login(String email, String password) async {
+    final stopwatch = Stopwatch()..start();
     isLoading = true;
     errorMessage = null;
     notifyListeners();
 
     try {
       // 10-second timeout to avoid infinite loading spinner
-      final credential = await FirebaseAuth.instance
+      final credential = await _auth
           .signInWithEmailAndPassword(
             email: email.trim(),
             password: password.trim(),
@@ -134,6 +140,11 @@ class AuthProvider extends ChangeNotifier {
 
       // Run both in parallel to speed up the login process
       await Future.wait([refreshUser(), checkUserRole()]);
+
+      stopwatch.stop();
+      final ms = stopwatch.elapsedMilliseconds;
+      final s = ms / 1000;
+      debugPrint('Temps de connexion : $ms ms (${s.toStringAsFixed(2)} s)');
 
       return true;
     } on FirebaseAuthException catch (e) {
@@ -166,7 +177,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final credential = await FirebaseAuth.instance
+      final credential = await _auth
           .createUserWithEmailAndPassword(
             email: email.trim(),
             password: password.trim(),
@@ -184,7 +195,7 @@ class AuthProvider extends ChangeNotifier {
       // ── role: 'user' is ALWAYS forced here. Authorization is determined
       // by reading users/{uid}.role from Firestore. Security Rules reject
       // any client attempt to write role != 'user' on their own document. ──
-      await FirebaseFirestore.instance.collection('users').doc(uid).set({
+      await _firestore.collection('users').doc(uid).set({
         'uid': uid,
         'nom': nom.trim(),
         'prenom': prenom.trim(),
@@ -226,7 +237,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<bool> sendEmailVerification() async {
     try {
-      final currentUser = FirebaseAuth.instance.currentUser;
+      final currentUser = _auth.currentUser;
 
       if (currentUser == null) {
         errorMessage = 'Aucun utilisateur connecté.';
@@ -258,7 +269,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final currentUser = FirebaseAuth.instance.currentUser;
+      final currentUser = _auth.currentUser;
 
       if (currentUser == null) {
         _setUser(null);
@@ -268,7 +279,7 @@ class AuthProvider extends ChangeNotifier {
 
       await currentUser.reload();
 
-      _setUser(FirebaseAuth.instance.currentUser);
+      _setUser(_auth.currentUser);
 
       if (user == null) {
         return false;
@@ -287,7 +298,7 @@ class AuthProvider extends ChangeNotifier {
 
       if (e.code == 'user-not-found') {
         _setUser(null);
-        await FirebaseAuth.instance.signOut();
+        await _auth.signOut();
       }
 
       return false;
@@ -306,7 +317,7 @@ class AuthProvider extends ChangeNotifier {
   // ────────────────────────────────────────────────────
 
   Future<void> refreshUser() async {
-    final firebaseUser = FirebaseAuth.instance.currentUser;
+    final firebaseUser = _auth.currentUser;
 
     if (firebaseUser == null) {
       _setUser(null);
@@ -316,7 +327,7 @@ class AuthProvider extends ChangeNotifier {
     try {
       await firebaseUser.reload();
 
-      _setUser(FirebaseAuth.instance.currentUser);
+      _setUser(_auth.currentUser);
 
       print('REFRESHED USER: $user');
     } on FirebaseAuthException catch (e) {
@@ -324,7 +335,7 @@ class AuthProvider extends ChangeNotifier {
 
       if (e.code == 'user-not-found') {
         _setUser(null);
-        await FirebaseAuth.instance.signOut();
+        await _auth.signOut();
       } else {
         errorMessage = _mapAuthError(e.code);
         notifyListeners();
@@ -344,7 +355,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: email.trim());
+      await _auth.sendPasswordResetEmail(email: email.trim());
 
       return true;
     } on FirebaseAuthException catch (e) {
@@ -366,7 +377,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> logout() async {
     try {
-      await FirebaseAuth.instance.signOut();
+      await _auth.signOut();
 
       isAdmin = false;
       _setUser(null);

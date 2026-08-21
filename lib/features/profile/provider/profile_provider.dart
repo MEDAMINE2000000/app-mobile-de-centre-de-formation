@@ -8,10 +8,20 @@ import 'package:image_picker/image_picker.dart';
 import 'package:three_alfa_mobile_app/features/profile/model/profile_model.dart';
 
 class ProfileProvider extends ChangeNotifier {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseStorage _storage = FirebaseStorage.instance;
-  final ImagePicker _picker = ImagePicker();
+  final FirebaseFirestore _db;
+  final FirebaseAuth _auth;
+  final FirebaseStorage _storage;
+  final ImagePicker _picker;
+
+  ProfileProvider({
+    FirebaseFirestore? db,
+    FirebaseAuth? auth,
+    FirebaseStorage? storage,
+    ImagePicker? picker,
+  })  : _db = db ?? FirebaseFirestore.instance,
+        _auth = auth ?? FirebaseAuth.instance,
+        _storage = storage ?? FirebaseStorage.instance,
+        _picker = picker ?? ImagePicker();
 
   ProfileModel? profile;
 
@@ -38,6 +48,7 @@ class ProfileProvider extends ChangeNotifier {
     isLoading = true;
     errorMessage = null;
     notifyListeners();
+    final stopwatch = Stopwatch()..start();
 
     try {
       final doc = await _db.collection('users').doc(currentUser.uid).get();
@@ -55,6 +66,10 @@ class ProfileProvider extends ChangeNotifier {
     } finally {
       isLoading = false;
       notifyListeners();
+      stopwatch.stop();
+      final ms = stopwatch.elapsedMilliseconds;
+      final s = ms / 1000;
+      debugPrint('Temps de chargement : $ms ms (${s.toStringAsFixed(2)} s)');
     }
   }
 

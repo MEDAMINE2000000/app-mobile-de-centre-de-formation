@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:three_alfa_mobile_app/core/utils/performance_monitor.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -33,12 +34,22 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _onSeConnecter() async {
     if (!_formKey.currentState!.validate()) return;
 
+    PerformanceMonitor.start('connexion');
+
     final authProvider = context.read<AuthProvider>();
 
     final success = await authProvider.login(
       identifiantController.text.trim(),
       motDePasseController.text.trim(),
     );
+
+    if (success) {
+      if (authProvider.isAdmin) {
+        PerformanceMonitor.start('nav_Login_Admin');
+      } else {
+        PerformanceMonitor.start('nav_Login_Home');
+      }
+    }
 
     if (!mounted) return;
 

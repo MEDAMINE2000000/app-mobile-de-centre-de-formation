@@ -8,8 +8,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_alfa_mobile_app/features/inscription/model/inscription_model.dart';
 
 class InscriptionProvider extends ChangeNotifier {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _db;
+  final FirebaseAuth _auth;
+
+  InscriptionProvider({
+    FirebaseFirestore? db,
+    FirebaseAuth? auth,
+  })  : _db = db ?? FirebaseFirestore.instance,
+        _auth = auth ?? FirebaseAuth.instance {
+    _loadHiddenIds();
+  }
 
   List<InscriptionModel> myInscriptions = [];
 
@@ -24,9 +32,7 @@ class InscriptionProvider extends ChangeNotifier {
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
       _inscriptionsSubscription;
 
-  InscriptionProvider() {
-    _loadHiddenIds();
-  }
+
 
   Future<void> _loadHiddenIds() async {
     final prefs = await SharedPreferences.getInstance();

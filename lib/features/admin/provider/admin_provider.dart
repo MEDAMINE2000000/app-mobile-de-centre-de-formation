@@ -8,7 +8,9 @@ import 'package:three_alfa_mobile_app/features/formation/models/formation_model.
 import 'package:three_alfa_mobile_app/features/inscription/model/inscription_model.dart';
 
 class AdminProvider extends ChangeNotifier {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _db;
+
+  AdminProvider({FirebaseFirestore? db}) : _db = db ?? FirebaseFirestore.instance;
 
   AdminStats stats = AdminStats.empty();
   bool isLoadingStats = false;

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
@@ -42,6 +43,7 @@ class _DecisionCardState extends State<DecisionCard>
 
   bool _isConfirmed = false;
   bool _isProcessing = false;
+  Timer? _pulseTimer;
 
   bool get _isAccepted =>
       widget.inscription.status == InscriptionStatus.confirmed;
@@ -106,11 +108,11 @@ class _DecisionCardState extends State<DecisionCard>
   }
 
   void _startPulse() {
-    Future.delayed(const Duration(milliseconds: 600), () {
+    _pulseTimer = Timer(const Duration(milliseconds: 600), () {
       if (mounted && !_isConfirmed) {
         _pulseCtrl.forward().then((_) {
           if (mounted && !_isConfirmed) {
-            Future.delayed(const Duration(milliseconds: 1600), () {
+            _pulseTimer = Timer(const Duration(milliseconds: 1600), () {
               if (mounted && !_isConfirmed) {
                 _pulseCtrl.reset();
                 _startPulse();
@@ -204,6 +206,7 @@ class _DecisionCardState extends State<DecisionCard>
 
   @override
   void dispose() {
+    _pulseTimer?.cancel();
     _pulseCtrl.dispose();
     _tapCtrl.dispose();
     _checkCtrl.dispose();
